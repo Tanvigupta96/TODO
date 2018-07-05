@@ -56,7 +56,7 @@ public class AddNoteActivity extends AppCompatActivity
         spin.setOnItemSelectedListener(this);
 
         //spinner drop down elements
-        ArrayList<String> categories = new ArrayList<String>();
+        ArrayList<String> categories = new ArrayList<>();
         categories.add("Work");
         categories.add("Home");
         categories.add("Personal");
@@ -64,8 +64,8 @@ public class AddNoteActivity extends AppCompatActivity
         categories.add("Others");
 
         //creating adaptor for spinner
-        ArrayAdapter<String> dataAdapter =
-            new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, categories);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+            android.R.layout.simple_spinner_dropdown_item, categories);
 
         //drop-down layout style -listview with menu buttons
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

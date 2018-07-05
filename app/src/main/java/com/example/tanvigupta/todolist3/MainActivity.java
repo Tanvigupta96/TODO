@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         //attaching data adapter to spinner
         //spin.setAdapter(dataAdapter);
 
-        adaptor = new CustomAdaptor(this, notes);
+        adaptor = new CustomAdaptor(this, notes, getLayoutInflater());
 
         listView.setAdapter(adaptor);
         listView.setOnItemLongClickListener(this);

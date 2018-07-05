@@ -17,9 +17,9 @@ public class CustomAdaptor extends ArrayAdapter {
     LayoutInflater inflater;
     int inflateCount = 0;
 
-    public CustomAdaptor(@NonNull Context context, ArrayList<Note> items) {
+    public CustomAdaptor(@NonNull Context context, ArrayList<Note> items, LayoutInflater inflater) {
         super(context, 0, items);
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = inflater;
         this.items = items;
     }
 
