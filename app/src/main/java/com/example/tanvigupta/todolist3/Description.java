@@ -2,6 +2,8 @@ package com.example.tanvigupta.todolist3;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +17,12 @@ import android.widget.TextView;
 
 public class Description extends AppCompatActivity {
     TextView txt1, txt2, txt3, txt4;
-    public static final String TITLE_KEY = "title", DESCRIPTION_KEY = "description", DATE_KEY = "date", TIME_KEY = "time",CATEGORY_KEY= "category",ID_KEY="id";
+    public static final String TITLE_KEY = "title", DESCRIPTION_KEY = "description", DATE_KEY = "date", TIME_KEY = "time", CATEGORY_KEY = "category", ID_KEY = "id";
 
     long id;
+
+    SQLiteDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,19 +32,37 @@ public class Description extends AppCompatActivity {
         txt3 = findViewById(R.id.date);
         txt4 = findViewById(R.id.time);
 
+        NoteOpenHelper helper = NoteOpenHelper.getInstance(this);
+        database = helper.getReadableDatabase();
+
         Intent intent1 = getIntent();
-        String title = intent1.getStringExtra(MainActivity.KEY_VALUE1);
-        String description = intent1.getStringExtra(MainActivity.KEY_VALUE2);
-        String date = intent1.getStringExtra(MainActivity.KEY_VALUE3);
-        String time = intent1.getStringExtra(MainActivity.KEY_VALUE4);
-        String category= intent1.getStringExtra(MainActivity.KEY_VALUE5);
-        id=intent1.getLongExtra(MainActivity.ID,0);
+        id = intent1.getLongExtra(ID_KEY, 0);
+        loadAndSetNote(id);
 
 
-        txt1.setText(title);
-        txt2.setText(description);
-        txt3.setText(date);
-        txt4.setText(time);
+    }
+
+    private void loadAndSetNote(long id) {
+
+        Cursor cursor = database.rawQuery(String.format("select * from %s where %s = %s", Contract.NOTE.TABLE_NAME, Contract.NOTE.COLUMN_ID, id), null);
+        while (cursor.moveToNext()) {
+            String title = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_TITLE));
+            String description = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_DESCRIPTION));
+            String date = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_DATE));
+            String time = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_NOTE_TIME));
+            txt1.setText(title);
+            txt2.setText(description);
+            txt3.setText(date);
+            txt4.setText(time);
+        }
+        cursor.close();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        id = intent.getLongExtra(ID_KEY, 0);
+        loadAndSetNote(id);
     }
 
     @Override
@@ -69,13 +92,13 @@ public class Description extends AppCompatActivity {
                 bundle.putString("description", description);
                 bundle.putString("date", date);
                 bundle.putString("time", time);
-                bundle.putLong("id",this.id);
+                bundle.putLong("id", this.id);
 
                 Intent intent = new Intent(this, EditActivity.class);
                 intent.putExtras(bundle);
+                Log.d("Description", "start activity for result");
                 startActivityForResult(intent, 2);
                 break;
-
 
 
         }
@@ -86,6 +109,7 @@ public class Description extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d("Description.class", "getting called");
 
 
         String title = data.getStringExtra(EditActivity.TITLE_KEY);
@@ -97,7 +121,8 @@ public class Description extends AppCompatActivity {
         txt2.setText(description);
         txt3.setText(date);
         txt4.setText(time);
-        data.putExtra(ID_KEY,id);
+        data.putExtra(ID_KEY, id);
+        Log.d("Description.class", id + "");
 
         setResult(5, data);
     }

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 public class PermissionSettings extends AppCompatActivity {
     CheckBox c;
@@ -18,26 +19,29 @@ public class PermissionSettings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission_settings);
-
-        c=findViewById(R.id.checkbox);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED)
-        {     c.setChecked(true);
-            c.setEnabled(false);
+        sharedPreferences = getSharedPreferences(Constants.SHARED_PREF_FILE, MODE_PRIVATE);
+        c = findViewById(R.id.checkbox);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
+            c.setChecked(true);
+            //save();
+        } else {
+            c.setChecked(false);
             //save();
         }
-        else{
-            c.setChecked(false);
-            // save();
-        }
 
-
-    }
-
-    public void onCheckBoxClicked(View view){
-        String[] permissions = {Manifest.permission.RECEIVE_SMS};
-        ActivityCompat.requestPermissions(this, permissions, 1);
-
-
+        c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (ActivityCompat.checkSelfPermission(PermissionSettings.this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+                        String[] permissions = {Manifest.permission.RECEIVE_SMS};
+                        ActivityCompat.requestPermissions(PermissionSettings.this, permissions, 1);
+                    }
+                } else {
+                    save();
+                }
+            }
+        });
     }
 
     @Override
@@ -50,14 +54,14 @@ public class PermissionSettings extends AppCompatActivity {
             } else {
                 c.setChecked(false);
             }
-              save();
+            save();
 
         }
     }
 
-    public void save(){
-        SharedPreferences.Editor editor= sharedPreferences.edit();
-        editor.putBoolean("Check",c.isChecked());
+    public void save() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(Constants.IS_SMS_READ_ENABLE, c.isChecked());
         editor.commit();
     }
 

@@ -1,8 +1,11 @@
 package com.example.tanvigupta.todolist3;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -14,28 +17,33 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AddNoteActivity extends AppCompatActivity
-    implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+        implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     public static final String TITLE_KEY = "title";
     public static final String DESCRIPTION_KEY = "description";
     public static final String DATE_KEY = "date";
     public static final String TIME_KEY = "time";
     public static final String CATEGORY_KEY = "category";
+    public static final String ID = "id";
 
     EditText txtDate, txtTime;
-    Button datebtn, timebtn;
+    ImageView datebtn, timebtn;
     private int mYEAR, mMONTH, mDAY, mHOUR, mMINUTE;
     Spinner spin;
     String spinner_item;
     EditText descriptioneditText;
     SQLiteDatabase database;
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
         datebtn = findViewById(R.id.datebtn);
@@ -65,7 +73,7 @@ public class AddNoteActivity extends AppCompatActivity
 
         //creating adaptor for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
-            android.R.layout.simple_spinner_dropdown_item, categories);
+                android.R.layout.simple_spinner_dropdown_item, categories);
 
         //drop-down layout style -listview with menu buttons
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -78,6 +86,7 @@ public class AddNoteActivity extends AppCompatActivity
         if (description != null) {
             descriptioneditText.setText(description);
             descriptioneditText.setSelection(descriptioneditText.getText().length());
+
         }
     }
 
@@ -101,7 +110,7 @@ public class AddNoteActivity extends AppCompatActivity
         contentValues.put(Contract.NOTE.COLUMN_NOTE_TIME, time);
         contentValues.put(Contract.NOTE.COLUMN_CATEGORY, spinner_item);
 
-        database.insert(Contract.NOTE.TABLE_NAME, null, contentValues);
+        long id = database.insert(Contract.NOTE.TABLE_NAME, null, contentValues);
 
         Intent data = new Intent();
         data.putExtra(TITLE_KEY, title);
@@ -109,51 +118,78 @@ public class AddNoteActivity extends AppCompatActivity
         data.putExtra(DATE_KEY, date);
         data.putExtra(TIME_KEY, time);
         data.putExtra(CATEGORY_KEY, spinner_item);
+        data.putExtra(ID, id);
 
+
+        AlarmManager manager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, mYEAR);
+        cal.set(Calendar.MONTH, mMONTH);
+        cal.set(Calendar.DAY_OF_MONTH, mDAY);
+        cal.set(Calendar.HOUR_OF_DAY, mHOUR);
+        cal.set(Calendar.MINUTE, mMINUTE);
+
+        Intent i = new Intent(this, MyReceiver.class);
+        i.putExtra(ID, id);
+        i.putExtra(TIME_KEY, time);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, i, 0);
+        manager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
         setResult(2, data);
         finish();
+
+
     }
 
-    @Override public void onClick(View view) {
+    @Override
+    public void onClick(View view) {
         int id = view.getId();
+        Calendar calendar = Calendar.getInstance();
         if (id == R.id.datebtn) {
-
-            //GET CURRENT DATE
-            final Calendar c = Calendar.getInstance();
-            mDAY = c.get(Calendar.DAY_OF_MONTH);
-            mMONTH = c.get(Calendar.DATE);
-            mYEAR = c.get(Calendar.YEAR);
-
+            mYEAR = calendar.get(Calendar.YEAR);
+            mMONTH = calendar.get(Calendar.MONTH);
+            mDAY = calendar.get(Calendar.DAY_OF_MONTH);
             DatePickerDialog datePickerDialog =
-                new DatePickerDialog(AddNoteActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        txtDate.setText(i + "-" + (i1 + 1) + "-" + i2);
-                    }
-                }, mDAY, mMONTH, mYEAR);
+                    new DatePickerDialog(AddNoteActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            txtDate.setText(i + "-" + (i1 + 1) + "-" + i2);
+                            mYEAR = i;
+                            mMONTH = i1;
+                            mDAY = i2;
+
+                        }
+                    }, mYEAR, mMONTH, mDAY);
             datePickerDialog.show();
         } else if (id == R.id.timebtn) {
             //GET CURRENT TIME
-            final Calendar c = Calendar.getInstance();
-            mHOUR = c.get(Calendar.HOUR_OF_DAY);
-            mMINUTE = c.get(Calendar.MINUTE);
+            mHOUR = calendar.get(Calendar.HOUR_OF_DAY);
+            mMINUTE = calendar.get(Calendar.MINUTE);
 
             TimePickerDialog timePickerDialog =
-                new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        txtTime.setText(i + ":" + i1);
-                    }
-                }, mHOUR, mMINUTE, true);
+                    new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                            txtTime.setText(i + ":" + i1);
+                            mHOUR = i;
+                            mMINUTE = i1;
+                        }
+                    }, mHOUR, mMINUTE, true);
             timePickerDialog.show();
         }
     }
 
-    @Override public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         spinner_item = adapterView.getItemAtPosition(i).toString();
         Log.d("AddNoteActivity.class", spinner_item);
     }
 
-    @Override public void onNothingSelected(AdapterView<?> adapterView) {
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
 }
 

@@ -8,7 +8,7 @@ public class Note {
     String category;
     long id;
 
-    public Note(String title, String description, String date, String time,String category) {
+    public Note(String title, String description, String date, String time, String category) {
         this.title = title;
         this.description = description;
         this.date = date;

@@ -16,15 +16,17 @@ public class CustomAdaptor extends ArrayAdapter {
     ArrayList<Note> items;
     LayoutInflater inflater;
     int inflateCount = 0;
+    TODOitemClickListenener listenener;
 
-    public CustomAdaptor(@NonNull Context context, ArrayList<Note> items, LayoutInflater inflater) {
+    public CustomAdaptor(@NonNull Context context, ArrayList<Note> items, LayoutInflater inflater,TODOitemClickListenener listenener) {
         super(context, 0, items);
         this.inflater = inflater;
         this.items = items;
+        this.listenener=listenener;
     }
 
     @NonNull @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View output = convertView;
         if (output == null) {
             output = inflater.inflate(R.layout.todo_row_layout, parent, false);
@@ -34,6 +36,14 @@ public class CustomAdaptor extends ArrayAdapter {
         TextView descriptionview = output.findViewById(R.id.textview2);
         TextView dateview = output.findViewById(R.id.textview3);
         TextView timeview = output.findViewById(R.id.textview4);
+        ImageView imageView=output.findViewById(R.id.deletetodo);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listenener.rowImageClicked(v,position);
+            }
+        });
 
         Note note = items.get(position);
         img.setImageResource(R.drawable.notepapericon);
@@ -41,6 +51,10 @@ public class CustomAdaptor extends ArrayAdapter {
         descriptionview.setText(note.getDescription());
         dateview.setText(note.getDate());
         timeview.setText(note.getTime());
+
+
+
+
         return output;
     }
 }

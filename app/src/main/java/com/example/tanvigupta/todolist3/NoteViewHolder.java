@@ -9,4 +9,5 @@ public class NoteViewHolder {
     ImageView image;
     TextView date;
     TextView time;
+    ImageView delete;
 }

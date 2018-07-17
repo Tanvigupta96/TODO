@@ -22,27 +22,29 @@ public class NoteOpenHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, VERSION);
     }
 
-    @Override public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String NoteSql = "CREATE TABLE "
-            + Contract.NOTE.TABLE_NAME
-            + "( "
-            + Contract.NOTE.COLUMN_ID
-            + " INTEGER PRIMARY KEY AUTOINCREMENT , "
-            + Contract.NOTE.COLUMN_TITLE
-            + " TEXT , "
-            + Contract.NOTE.COLUMN_DESCRIPTION
-            + " TEXT , "
-            + Contract.NOTE.COLUMN_DATE
-            + " TEXT , "
-            + Contract.NOTE.COLUMN_CATEGORY
-            + " TEXT , "
-            + Contract.NOTE.COLUMN_NOTE_TIME
-            + " TEXT )";
+                + Contract.NOTE.TABLE_NAME
+                + "( "
+                + Contract.NOTE.COLUMN_ID
+                + " INTEGER PRIMARY KEY AUTOINCREMENT , "
+                + Contract.NOTE.COLUMN_TITLE
+                + " TEXT , "
+                + Contract.NOTE.COLUMN_DESCRIPTION
+                + " TEXT , "
+                + Contract.NOTE.COLUMN_DATE
+                + " TEXT , "
+                + Contract.NOTE.COLUMN_CATEGORY
+                + " TEXT , "
+                + Contract.NOTE.COLUMN_NOTE_TIME
+                + " TEXT )";
         sqLiteDatabase.execSQL(NoteSql);
         Log.d("NoteOpenHelper.class", NoteSql);
     }
 
-    @Override public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
 }
