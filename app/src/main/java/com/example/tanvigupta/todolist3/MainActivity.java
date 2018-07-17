@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity
 
         Log.d("MainActivity.class", query);
 
-        // Added by mayank you forgot to do this.
+        // i forgot to do this
         adaptor.notifyDataSetChanged();
 
         Log.d("MainActivity.class", query);

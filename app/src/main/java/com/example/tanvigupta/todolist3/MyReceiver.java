@@ -55,17 +55,13 @@ public class MyReceiver extends BroadcastReceiver {
             Log.e("SmsReceiver", "Exception smsReceiver" + e);
         }
 
-        if (senderNum != null
-            && message != null
-            && msgDate != null
-            && msgDate != null
-            && msgTime != null) {
+        if (senderNum != null && message != null && msgDate != null && msgDate != null && msgTime != null) {
 
             String title = senderNum;
             String description = message;
             String date = msgDate;
             String time = msgTime;
-            String category = "Other";
+            String category = "Others";
             add(title, description, date, time, category, context);
         }
     }
