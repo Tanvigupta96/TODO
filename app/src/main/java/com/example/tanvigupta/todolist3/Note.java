@@ -8,12 +8,16 @@ public class Note {
     String category;
     long id;
 
+
+
+
     public Note(String title, String description, String date, String time, String category) {
         this.title = title;
         this.description = description;
         this.date = date;
         this.time = time;
         this.category = category;
+
     }
 
     public String getTitle() {
@@ -43,4 +47,6 @@ public class Note {
     public void setId(long id) {
         this.id = id;
     }
+
+
 }

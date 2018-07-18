@@ -19,7 +19,7 @@ public class Description extends AppCompatActivity {
     TextView txt1, txt2, txt3, txt4;
     public static final String TITLE_KEY = "title", DESCRIPTION_KEY = "description", DATE_KEY = "date", TIME_KEY = "time", CATEGORY_KEY = "category", ID_KEY = "id";
 
-    long id;
+    long id,id1;
 
     SQLiteDatabase database;
 
@@ -39,10 +39,32 @@ public class Description extends AppCompatActivity {
         id = intent1.getLongExtra(ID_KEY, 0);
         loadAndSetNote(id);
 
+        Intent intent2=getIntent();
+        id1=intent2.getLongExtra(MyReceiver.ID_KEY2,0);
+        loadandsetNoteformessage(id1);
+
+
 
     }
 
     private void loadAndSetNote(long id) {
+
+        Cursor cursor = database.rawQuery(String.format("select * from %s where %s = %s", Contract.NOTE.TABLE_NAME, Contract.NOTE.COLUMN_ID, id), null);
+        while (cursor.moveToNext()) {
+            String title = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_TITLE));
+            String description = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_DESCRIPTION));
+            String date = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_DATE));
+            String time = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_NOTE_TIME));
+            txt1.setText(title);
+            txt2.setText(description);
+            txt3.setText(date);
+            txt4.setText(time);
+        }
+        cursor.close();
+    }
+
+
+    private void loadandsetNoteformessage(long id) {
 
         Cursor cursor = database.rawQuery(String.format("select * from %s where %s = %s", Contract.NOTE.TABLE_NAME, Contract.NOTE.COLUMN_ID, id), null);
         while (cursor.moveToNext()) {

@@ -7,20 +7,25 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 public class PermissionSettings extends AppCompatActivity {
     CheckBox c;
+    CheckBox c1;
     SharedPreferences sharedPreferences;
 
+    Boolean b;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission_settings);
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREF_FILE, MODE_PRIVATE);
         c = findViewById(R.id.checkbox);
+        c1 = findViewById(R.id.checkbox1);
+        b=sharedPreferences.getBoolean(Constants.IS_REMINDERS_ENABLE,false);
+        c1.setChecked(b);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
             c.setChecked(true);
             //save();
@@ -33,13 +38,20 @@ public class PermissionSettings extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    if (ActivityCompat.checkSelfPermission(PermissionSettings.this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(com.example.tanvigupta.todolist3.PermissionSettings.this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
                         String[] permissions = {Manifest.permission.RECEIVE_SMS};
-                        ActivityCompat.requestPermissions(PermissionSettings.this, permissions, 1);
+                        ActivityCompat.requestPermissions(com.example.tanvigupta.todolist3.PermissionSettings.this, permissions, 1);
                     }
                 } else {
                     save();
                 }
+            }
+        });
+
+        c1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean b) {
+                saveforsms();
             }
         });
     }
@@ -57,13 +69,26 @@ public class PermissionSettings extends AppCompatActivity {
             save();
 
         }
+
+
     }
+
 
     public void save() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(Constants.IS_SMS_READ_ENABLE, c.isChecked());
         editor.commit();
+
+    }
+
+    public void saveforsms(){
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putBoolean(Constants.IS_REMINDERS_ENABLE,c1.isChecked());
+        editor.commit();
     }
 
 
 }
+
+
+

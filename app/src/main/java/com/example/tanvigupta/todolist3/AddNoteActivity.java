@@ -7,14 +7,18 @@ import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,14 +37,21 @@ public class AddNoteActivity extends AppCompatActivity
     public static final String TIME_KEY = "time";
     public static final String CATEGORY_KEY = "category";
     public static final String ID = "id";
+    public static final String IS_STARRED="isstarred";
 
     EditText txtDate, txtTime;
     ImageView datebtn, timebtn;
     private int mYEAR, mMONTH, mDAY, mHOUR, mMINUTE;
     Spinner spin;
+
+
     String spinner_item;
     EditText descriptioneditText;
+
     SQLiteDatabase database;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +63,12 @@ public class AddNoteActivity extends AppCompatActivity
         txtTime = findViewById(R.id.edittext4);
         descriptioneditText = findViewById(R.id.edittext2);
 
+
+
+
+
         NoteOpenHelper openHelper = NoteOpenHelper.getInstance(this);
-        database = openHelper.getReadableDatabase();
+        database = openHelper.getWritableDatabase();
 
         datebtn.setOnClickListener(this);
         timebtn.setOnClickListener(this);
@@ -88,6 +103,8 @@ public class AddNoteActivity extends AppCompatActivity
             descriptioneditText.setSelection(descriptioneditText.getText().length());
 
         }
+
+
     }
 
     public void saveNote(View view) {
@@ -101,6 +118,10 @@ public class AddNoteActivity extends AppCompatActivity
         String date = txtDate.getText().toString();
         String time = txtTime.getText().toString();
 
+
+
+
+
         //DATABASE THING
 
         //yaha se we are saving data into the database
@@ -110,7 +131,19 @@ public class AddNoteActivity extends AppCompatActivity
         contentValues.put(Contract.NOTE.COLUMN_NOTE_TIME, time);
         contentValues.put(Contract.NOTE.COLUMN_CATEGORY, spinner_item);
 
+
+
         long id = database.insert(Contract.NOTE.TABLE_NAME, null, contentValues);
+
+
+
+        //for deletion
+        Intent intent1=new Intent(AddNoteActivity.this,MainActivity.class);
+        intent1.putExtra(ID,id);
+        Log.d("AddNoteActivity",id+"");
+        startActivity(intent1);
+
+
 
         Intent data = new Intent();
         data.putExtra(TITLE_KEY, title);
@@ -119,6 +152,7 @@ public class AddNoteActivity extends AppCompatActivity
         data.putExtra(TIME_KEY, time);
         data.putExtra(CATEGORY_KEY, spinner_item);
         data.putExtra(ID, id);
+
 
 
         AlarmManager manager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
@@ -130,13 +164,16 @@ public class AddNoteActivity extends AppCompatActivity
         cal.set(Calendar.HOUR_OF_DAY, mHOUR);
         cal.set(Calendar.MINUTE, mMINUTE);
 
-        Intent i = new Intent(this, MyReceiver.class);
+
+        Intent i = new Intent(this, NotificationReciever.class);
         i.putExtra(ID, id);
         i.putExtra(TIME_KEY, time);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, i, 0);
         manager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
         setResult(2, data);
         finish();
+
+
 
 
     }
@@ -189,6 +226,8 @@ public class AddNoteActivity extends AppCompatActivity
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
 
 
 }

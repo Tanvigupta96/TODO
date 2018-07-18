@@ -11,8 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-            android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Main.AppBarOverlay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,37 +21,33 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddNoteActivity">
-
             <intent-filter>
-
                 <action android:name="android.intent.action.SEND" />
-                <data android:mimeType="text/plain" />
-                <category android:name="android.intent.category.DEFAULT" />
 
+                <data android:mimeType="text/plain" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Description"
-            android:theme="@style/AppTheme">
-
-
-        </activity>
+            android:theme="@style/AppTheme" />
         <activity android:name=".EditActivity" />
 
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
-
         </receiver>
+        <receiver
+            android:name=".NotificationReciever"
+            android:enabled="true"
+            android:exported="true" />
 
-        <activity android:name=".PermissionSettings">
-
-        </activity>
+        <activity android:name=".PermissionSettings"></activity>
     </application>
 
 </manifest>

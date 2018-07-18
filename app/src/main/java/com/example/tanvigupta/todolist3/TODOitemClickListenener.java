@@ -4,5 +4,6 @@ import android.view.View;
 
 public interface TODOitemClickListenener {
 
-    void rowImageClicked(View view, int position);
+    void rowImageClicked(View view, int position,long id);
+
 }

@@ -29,8 +29,12 @@ public class MyReceiver extends BroadcastReceiver {
     String senderNum;
     String msgTime;
     String msgDate;
+    int i;
+    long id;
 
-    int i=1;
+    public static final String ID_KEY2 = "id";
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
@@ -84,27 +88,23 @@ public class MyReceiver extends BroadcastReceiver {
         }
 
         // This code is only here to show notification when you receive an sms
-
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         ++i;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("channelid", "mychannel", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel("channelid1", "mychannel1", NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
         }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channelid");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channelid1");
         builder.setContentTitle("New Notification");
-        builder.setContentText("Time to check your TODO "+i);
+        builder.setContentText("Sms Recieved"+i);
         builder.setSmallIcon(R.drawable.notificationicon);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.notepapericon));
-        builder.setColor(context.getResources().getColor(R.color.colorPrimary));
+
         Intent activityIntent = new Intent(context, Description.class);
 
-        long id = intent.getLongExtra(AddNoteActivity.ID, 0);
 
-        activityIntent.putExtra(Description.ID_KEY, id);
+
+        activityIntent.putExtra(ID_KEY2, id);
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -114,6 +114,11 @@ public class MyReceiver extends BroadcastReceiver {
         Notification notification = builder.build();
         manager.notify(1, notification);
     }
+
+
+
+
+
 
 
     public void add(String title, String description, String date, String time, String category,
@@ -131,8 +136,10 @@ public class MyReceiver extends BroadcastReceiver {
         contentValues.put(Contract.NOTE.COLUMN_NOTE_TIME, time);
         contentValues.put(Contract.NOTE.COLUMN_CATEGORY, category);
 
-        database.insert(Contract.NOTE.TABLE_NAME, null, contentValues);
-    }
+         id = database.insert(Contract.NOTE.TABLE_NAME, null, contentValues);
+
+
+         }
 
 
 }

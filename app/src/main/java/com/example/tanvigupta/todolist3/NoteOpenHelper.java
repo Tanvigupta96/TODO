@@ -39,6 +39,8 @@ public class NoteOpenHelper extends SQLiteOpenHelper {
                 + " TEXT , "
                 + Contract.NOTE.COLUMN_NOTE_TIME
                 + " TEXT )";
+
+
         sqLiteDatabase.execSQL(NoteSql);
         Log.d("NoteOpenHelper.class", NoteSql);
     }

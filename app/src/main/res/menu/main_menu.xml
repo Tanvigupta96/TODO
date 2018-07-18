@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:title="Settings" app:showAsAction="always" android:icon="@drawable/settings" android:id="@+id/settings"/>
+
     <item android:title="SortBy" android:id="@+id/sortby">
     <menu>
         <item android:title="Title" android:id="@+id/title"/>
@@ -11,5 +12,7 @@
     </menu>
 
     </item>
+
+    <item android:title="FeedBack" android:id="@+id/feedback"/>
 
 </menu>

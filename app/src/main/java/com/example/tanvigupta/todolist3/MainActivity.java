@@ -7,10 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,10 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import java.util.ArrayList;
@@ -44,12 +49,13 @@ public class MainActivity extends AppCompatActivity implements
             KEY_VALUE4 = "time", KEY_VALUE5 = "category";
     public static final String ID = "id";
     private int position;
-    //private long id;
+    //public long id;
     SQLiteDatabase database;
 
     String message;
 
     String selectedItem;
+
 
 
     @Override
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements
         categories.add("All");
 
         //creating adaptor for spinner
-        ArrayAdapter<String> dataAdapter =
+        final ArrayAdapter<String> dataAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
 
         //drop-down layout style -listview with menu buttons
@@ -92,26 +98,38 @@ public class MainActivity extends AppCompatActivity implements
 
         adaptor = new CustomAdaptor(this, notes, getLayoutInflater(), new TODOitemClickListenener() {
             @Override
-            public void rowImageClicked(View view, final int position) {
+            public void rowImageClicked(View view, final int position, final long id) {
                 Note note = notes.get(position);
-
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getApplicationContext());
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
                 dialog.setTitle("confirm delete!");
                 dialog.setMessage("Are you sure you want to delete?");
                 dialog.setCancelable(false);
                 dialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(DialogInterface dialogInterface,int i) {
+
                         notes.remove(position);
                         adaptor.notifyDataSetChanged();
+
+                        Log.d("MainActivity",id+"");
+                        String[] SelectionArgs={id+ ""};
+                        Cursor cursor=database.query(Contract.NOTE.TABLE_NAME,null,Contract.NOTE.COLUMN_ID+ " = ? ",SelectionArgs,null,null,null);
+                        database.delete(Contract.NOTE.TABLE_NAME,Contract.NOTE.COLUMN_ID+" = ? ",SelectionArgs);
+
+
+                        cursor.close();
+
+
+
+
                     }
                 });
                 AlertDialog dialog1 = dialog.create();
                 dialog1.show();
 
+                }
 
 
-            }
         });
 
         listView.setAdapter(adaptor);
@@ -138,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent1);
                 break;
 
-            case R.id.title:
+                case R.id.title:
                 sort(Contract.NOTE.COLUMN_TITLE);
                 break;
             case R.id.desc:
@@ -149,6 +167,14 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.time:
                 sort(Contract.NOTE.COLUMN_NOTE_TIME);
+                break;
+            case R.id.feedback:
+                Intent intent=new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                Uri uri=Uri.parse("https://www.google.co.in/");
+                intent.setData(uri);
+                Toast.makeText(this,"You can send your feedback via mail",Toast.LENGTH_LONG).show();
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -242,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements
             query = String.format("SELECT * FROM %s", Contract.NOTE.TABLE_NAME);
         } else {
             query =
-                    String.format("SELECT * FROM %s WHERE %s = \'%s\'", Contract.NOTE.TABLE_NAME,
+                    String.format("SELECT * FROM %s WHERE %s = \'%s\'" , Contract.NOTE.TABLE_NAME,
                             Contract.NOTE.COLUMN_CATEGORY, selectedItem);
         }
 
@@ -256,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements
             String date = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_DATE));
             String time = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_NOTE_TIME));
             String category = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_CATEGORY));
+
             long id = cursor.getLong(cursor.getColumnIndex(Contract.NOTE.COLUMN_ID));
 
             Note note = new Note(title, description, date, time,
@@ -264,13 +291,10 @@ public class MainActivity extends AppCompatActivity implements
             notes.add(note);
         }
         cursor.close();
-
-        Log.d("MainActivity.class", query);
-
         // i forgot to do this
         adaptor.notifyDataSetChanged();
 
-        Log.d("MainActivity.class", query);
+
     }
 
     @Override
@@ -279,7 +303,11 @@ public class MainActivity extends AppCompatActivity implements
 
     public void sort(String orderbyarguement) {
         String query;
-        query = String.format("SELECT * FROM %s where %s = \'%s\'order by %s", Contract.NOTE.TABLE_NAME, Contract.NOTE.COLUMN_CATEGORY, selectedItem, orderbyarguement);
+        if(selectedItem=="All"){
+            query=String.format("SELECT * FROM %s order by %s",Contract.NOTE.TABLE_NAME,orderbyarguement);
+        }else {
+            query = String.format("SELECT * FROM %s where %s = \'%s\'order by %s", Contract.NOTE.TABLE_NAME, Contract.NOTE.COLUMN_CATEGORY, selectedItem, orderbyarguement);
+        }
         Log.d("MainActivity.class", query);
         Cursor cursor = database.rawQuery(query, null);
         notes.clear();
@@ -292,19 +320,16 @@ public class MainActivity extends AppCompatActivity implements
             String category = cursor.getString(cursor.getColumnIndex(Contract.NOTE.COLUMN_CATEGORY));
             long id = cursor.getLong(cursor.getColumnIndex(Contract.NOTE.COLUMN_ID));
 
-            Note note = new Note(title, description, date, time,
-                    category); //array list me b save krana h taki show ho when we run the application
+            Note note = new Note(title, description, date, time, category); //array list me b save krana h taki show ho when we run the application
             note.setId(id);
             notes.add(note);
         }
         cursor.close();
 
-        Log.d("MainActivity.class", query);
 
         // i forgot to do this
         adaptor.notifyDataSetChanged();
 
-        Log.d("MainActivity.class", query);
     }
 
 
@@ -319,6 +344,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
     }
+
+
+
 }
 
 
