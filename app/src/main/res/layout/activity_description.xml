@@ -6,30 +6,71 @@
     android:layout_height="match_parent"
     tools:context=".Description"
     android:orientation="vertical"
-    android:background="#f5cf81">
+    android:background="@color/white">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                app:titleTextColor="#ffffff"
+                app:navigationIcon="@drawable/ic_arrow_back_white_18dp">
+
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:textStyle="bold"
+        tools:text="this is title"
+        android:textSize="25dp"
+        android:textColor="#090808"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:background="#4B4A4A" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/description"
-        android:layout_margin="10dp"
+        android:layout_marginTop="25dp"
+        tools:text="this is description"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/date"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        tools:text="this is date"
+
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/time"
-        android:layout_margin="10dp"/>
+        tools:text="this is time"
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

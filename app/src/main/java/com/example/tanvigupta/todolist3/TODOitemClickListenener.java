@@ -5,5 +5,6 @@ import android.view.View;
 public interface TODOitemClickListenener {
 
     void rowImageClicked(View view, int position,long id);
+    void onStarClicked(View view,int position,long id);
 
 }

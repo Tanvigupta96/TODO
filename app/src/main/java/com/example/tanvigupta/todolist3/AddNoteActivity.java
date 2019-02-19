@@ -11,7 +11,9 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -43,6 +45,8 @@ public class AddNoteActivity extends AppCompatActivity
     ImageView datebtn, timebtn;
     private int mYEAR, mMONTH, mDAY, mHOUR, mMINUTE;
     Spinner spin;
+    Toolbar toolbar;
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
 
     String spinner_item;
@@ -62,8 +66,26 @@ public class AddNoteActivity extends AppCompatActivity
         txtDate = findViewById(R.id.edittext3);
         txtTime = findViewById(R.id.edittext4);
         descriptioneditText = findViewById(R.id.edittext2);
+        toolbar=findViewById(R.id.toolbar);
+        collapsingToolbarLayout=findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("Add a Note");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
+                finish();
+            }
+        });
 
 
 
@@ -226,6 +248,8 @@ public class AddNoteActivity extends AppCompatActivity
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
 
 
 

@@ -11,5 +11,7 @@ public class Contract {
         public static final String COLUMN_NOTE_TIME = "time";
         public static final String COLUMN_CATEGORY = "category";
 
+
+
     }
 }

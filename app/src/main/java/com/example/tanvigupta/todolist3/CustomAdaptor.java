@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -33,16 +34,15 @@ public class CustomAdaptor extends ArrayAdapter {
         if (output == null) {
             output = inflater.inflate(R.layout.todo_row_layout, parent, false);
         }
-        ImageView img = output.findViewById(R.id.image);
         TextView titleview = output.findViewById(R.id.textview1);
         TextView descriptionview = output.findViewById(R.id.textview2);
         TextView dateview = output.findViewById(R.id.textview3);
         TextView timeview = output.findViewById(R.id.textview4);
         ImageView imageView=output.findViewById(R.id.deletetodo);
+        ImageButton imageView1=output.findViewById(R.id.star);
 
 
         final Note note = items.get(position);
-        img.setImageResource(R.drawable.pencil);
         titleview.setText(note.getTitle());
         descriptionview.setText(note.getDescription());
         dateview.setText(note.getDate());
@@ -55,6 +55,12 @@ public class CustomAdaptor extends ArrayAdapter {
             }
         });
 
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onStarClicked(v,position,note.getId());
+            }
+        });
 
 
 

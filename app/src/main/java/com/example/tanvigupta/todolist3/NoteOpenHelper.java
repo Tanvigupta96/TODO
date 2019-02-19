@@ -41,6 +41,7 @@ public class NoteOpenHelper extends SQLiteOpenHelper {
                 + " TEXT )";
 
 
+
         sqLiteDatabase.execSQL(NoteSql);
         Log.d("NoteOpenHelper.class", NoteSql);
     }

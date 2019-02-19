@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.ContentLoadingProgressBar;
@@ -32,6 +34,8 @@ import android.widget.Toolbar;
 
 import java.util.ArrayList;
 
+import static com.example.tanvigupta.todolist3.R.drawable.*;
+
 public class MainActivity extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
         AdapterView.OnItemSelectedListener, View.OnClickListener {
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
     Spinner spin;
     FloatingActionButton fab;
     android.support.v7.widget.Toolbar toolbar;
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
 
     ArrayList<Note> notes = new ArrayList<>();
@@ -66,7 +71,13 @@ public class MainActivity extends AppCompatActivity implements
         spin = findViewById(R.id.spin1);
         fab = findViewById(R.id.add);
         toolbar = findViewById(R.id.toolbar);
+        collapsingToolbarLayout =  findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("Notes");
+
 
         // We only need to initialize the db once
         NoteOpenHelper openHelper = NoteOpenHelper.getInstance(getApplicationContext());
@@ -128,6 +139,11 @@ public class MainActivity extends AppCompatActivity implements
                 dialog1.show();
 
                 }
+
+            @Override
+            public void onStarClicked(View view, int position, long id) {
+                view.setBackgroundColor(Color.YELLOW);
+            }
 
 
         });

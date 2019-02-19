@@ -6,18 +6,28 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 public class Description extends AppCompatActivity {
     TextView txt1, txt2, txt3, txt4;
     public static final String TITLE_KEY = "title", DESCRIPTION_KEY = "description", DATE_KEY = "date", TIME_KEY = "time", CATEGORY_KEY = "category", ID_KEY = "id";
+    String title,description;
+    Intent intent;
+    Toolbar toolbar;
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
     long id,id1;
 
@@ -31,6 +41,26 @@ public class Description extends AppCompatActivity {
         txt2 = findViewById(R.id.description);
         txt3 = findViewById(R.id.date);
         txt4 = findViewById(R.id.time);
+        toolbar=findViewById(R.id.toolbar);
+        collapsingToolbarLayout=findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("View Note");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                finish();
+            }
+        });
 
         NoteOpenHelper helper = NoteOpenHelper.getInstance(this);
         database = helper.getReadableDatabase();
@@ -103,8 +133,8 @@ public class Description extends AppCompatActivity {
                 txt3 = findViewById(R.id.date);
                 txt4 = findViewById(R.id.time);
 
-                String title = txt1.getText().toString();
-                String description = txt2.getText().toString();
+                title = txt1.getText().toString();
+                description = txt2.getText().toString();
                 String date = txt3.getText().toString();
                 String time = txt4.getText().toString();
 
@@ -116,11 +146,24 @@ public class Description extends AppCompatActivity {
                 bundle.putString("time", time);
                 bundle.putLong("id", this.id);
 
-                Intent intent = new Intent(this, EditActivity.class);
+                intent = new Intent(this, EditActivity.class);
                 intent.putExtras(bundle);
                 Log.d("Description", "start activity for result");
                 startActivityForResult(intent, 2);
                 break;
+
+            case R.id.shareastext:
+                ArrayList<String> data = new ArrayList<>();
+                data.add(title);
+                data.add(description);
+                String data1 = TextUtils.join("\n", data);
+                intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(intent.EXTRA_TEXT, data1);
+                startActivity(intent);
+                break;
+
 
 
         }

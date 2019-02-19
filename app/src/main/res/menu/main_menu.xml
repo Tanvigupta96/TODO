@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="Settings" app:showAsAction="always" android:icon="@drawable/settings" android:id="@+id/settings"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item android:title="Settings" app:showAsAction="always" android:icon="@drawable/ic_settings_white_18dp" android:id="@+id/settings"/>
 
-    <item android:title="SortBy" android:id="@+id/sortby">
+    <item android:title="SortBy" android:id="@+id/sortby" >
     <menu>
-        <item android:title="Title" android:id="@+id/title"/>
+        <item android:title="Title" android:id="@+id/title" />
         <item android:title="Description" android:id="@+id/desc"/>
         <item android:title="Date" android:id="@+id/date"/>
         <item android:title="Time" android:id="@+id/time"/>
     </menu>
 
+
     </item>
+    <item android:title="Starred" android:id="@+id/starred"/>
 
     <item android:title="FeedBack" android:id="@+id/feedback"/>
 
